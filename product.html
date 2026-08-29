@@ -1,289 +1,76 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1029009349970448');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1029009349970448&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>পণ্য বিস্তারিত — মাঠ ফসল</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 100 100"><text y='.9em' font-size='90'>🌱</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
-/* Product View-specific styles */
-.product-hero{
-  background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);
-  color:#fff;
-  padding:40px 0;
-}
-.product-hero .crumb{
-  font-size:.87rem;
-  opacity:.8;
-  margin-bottom:8px;
-}
-.product-hero .crumb a{color:var(--light)}
-.product-hero .crumb a:hover{color:#fff}
-
-.product-layout{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:50px;
-  margin-top:-60px;
-  position:relative;
-  z-index:2;
-}
-
-.product-image-section{
-  background:#fff;
-  border-radius:24px;
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(9,35,40,.12);
-  border:1px solid var(--line);
-  position:sticky;
-  top:100px;
-  height:fit-content;
-}
-.product-image{
-  aspect-ratio:1/1;
-  overflow:hidden;
-  background:var(--cream);
-}
-.product-image img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  transition:transform .5s;
-}
-.product-image:hover img{
-  transform:scale(1.05);
-}
-
-.product-details{
-  background:#fff;
-  border-radius:24px;
-  padding:36px;
-  box-shadow:0 20px 60px rgba(9,35,40,.08);
-  border:1px solid var(--line);
-}
-
-.product-category{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(42,131,95,.1);
-  color:var(--green);
-  padding:6px 14px;
-  border-radius:50px;
-  font-size:.82rem;
-  font-weight:600;
-  margin-bottom:16px;
-}
-
-.product-title{
-  font-family:'Hind Siliguri',sans-serif;
-  font-weight:700;
-  font-size:clamp(1.5rem,3vw,2rem);
-  color:var(--dark);
-  line-height:1.3;
-  margin-bottom:12px;
-}
-
-.product-rating{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:20px;
-}
-.product-rating .stars{
-  color:var(--green);
-  font-size:1.1rem;
-  letter-spacing:2px;
-}
-.product-rating .rating-text{
-  color:var(--mut);
-  font-size:.88rem;
-}
-
-.product-price-box{
-  background:var(--cream);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:24px;
-}
-.product-price{
-  font-family:'Hind Siliguri',sans-serif;
-  font-weight:700;
-  font-size:2.2rem;
-  color:var(--dark);
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.product-price .old-price{
-  font-size:1.1rem;
-  color:var(--mut);
-  text-decoration:line-through;
-  font-weight:400;
-}
-.product-price .discount{
-  background:var(--green);
-  color:#fff;
-  padding:4px 12px;
-  border-radius:50px;
-  font-size:.85rem;
-  font-weight:700;
-}
-
-.product-description{
-  color:var(--mut);
-  line-height:1.7;
-  margin-bottom:24px;
-  font-size:.95rem;
-}
-
-.product-stock{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 16px;
-  background:rgba(42,131,95,.08);
-  border-radius:12px;
-  margin-bottom:24px;
-  font-size:.9rem;
-  font-weight:600;
-}
-.product-stock.in-stock{color:var(--green)}
-.product-stock.low-stock{color:#f59e0b}
-.product-stock.out-of-stock{color:var(--red)}
-
-/* Quantity Selector */
-.quantity-section{
-  margin-bottom:24px;
-}
-.quantity-section label{
-  display:block;
-  font-weight:600;
-  font-size:.9rem;
-  color:var(--dark);
-  margin-bottom:10px;
-}
-.quantity-selector{
-  display:inline-flex;
-  align-items:center;
-  gap:0;
-  background:var(--cream);
-  border:2px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-}
-.qty-btn{
-  width:48px;
-  height:48px;
-  border:none;
-  background:transparent;
-  color:var(--dark);
-  font-size:1.4rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .2s;
-  display:grid;
-  place-items:center;
-}
-.qty-btn:hover:not(:disabled){
-  background:var(--green);
-  color:#fff;
-}
-.qty-btn:disabled{
-  opacity:.3;
-  cursor:not-allowed;
-}
-.qty-display{
-  min-width:70px;
-  text-align:center;
-  font-weight:700;
-  font-size:1.2rem;
-  color:var(--dark);
-  border-left:2px solid var(--line);
-  border-right:2px solid var(--line);
-  padding:12px 0;
-}
-
-/* Action Buttons */
-.product-actions{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:28px;
-}
-.product-actions .btn{
-  flex:1;
-  min-width:160px;
-  padding:16px;
-  font-size:1rem;
-}
-
-/* Product Meta */
-.product-meta{
-  background:var(--cream);
-  border-radius:16px;
-  padding:20px;
-}
-.product-meta h4{
-  font-family:'Hind Siliguri',sans-serif;
-  font-weight:600;
-  font-size:1rem;
-  color:var(--dark);
-  margin-bottom:14px;
-}
-.meta-item{
-  display:flex;
-  align-items:start;
-  gap:12px;
-  padding:10px 0;
-  border-bottom:1px dashed var(--line);
-  font-size:.88rem;
-}
+.product-layout{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-top:40px;align-items:start}
+.product-image-section{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(9,35,40,.12);border:1px solid var(--line);position:sticky;top:100px}
+.product-image{aspect-ratio:1/1;overflow:hidden;background:var(--cream)}
+.product-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.product-image:hover img{transform:scale(1.05)}
+.product-details{background:#fff;border-radius:24px;padding:36px;box-shadow:0 20px 60px rgba(9,35,40,.08);border:1px solid var(--line)}
+.product-category{display:inline-flex;align-items:center;gap:6px;background:rgba(42,131,95,.1);color:var(--green);padding:6px 14px;border-radius:50px;font-size:.82rem;font-weight:600;margin-bottom:16px}
+.product-title{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:clamp(1.5rem,3vw,2rem);color:var(--dark);line-height:1.3;margin-bottom:12px}
+.product-rating{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.product-rating .stars{color:var(--green);font-size:1.1rem;letter-spacing:2px}
+.product-rating .rating-text{color:var(--mut);font-size:.88rem}
+.product-price-box{background:var(--cream);border-radius:16px;padding:20px;margin-bottom:24px}
+.product-price{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:2.2rem;color:var(--dark);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.product-price .old-price{font-size:1.1rem;color:var(--mut);text-decoration:line-through;font-weight:400}
+.product-price .discount{background:var(--green);color:#fff;padding:4px 12px;border-radius:50px;font-size:.85rem;font-weight:700}
+.product-description{color:var(--mut);line-height:1.7;margin-bottom:24px;font-size:.95rem}
+.product-stock{display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(42,131,95,.08);border-radius:12px;margin-bottom:24px;font-size:.9rem;font-weight:600}
+.product-stock.in-stock{color:var(--green)}.product-stock.low-stock{color:#f59e0b}.product-stock.out-of-stock{color:var(--red)}
+.quantity-section{margin-bottom:24px}
+.quantity-section label{display:block;font-weight:600;font-size:.9rem;color:var(--dark);margin-bottom:10px}
+.quantity-selector{display:inline-flex;align-items:center;gap:0;background:var(--cream);border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.qty-btn{width:48px;height:48px;border:none;background:transparent;color:var(--dark);font-size:1.4rem;font-weight:700;cursor:pointer;transition:all .2s;display:grid;place-items:center}
+.qty-btn:hover:not(:disabled){background:var(--green);color:#fff}
+.qty-btn:disabled{opacity:.3;cursor:not-allowed}
+.qty-display{min-width:70px;text-align:center;font-weight:700;font-size:1.2rem;color:var(--dark);border-left:2px solid var(--line);border-right:2px solid var(--line);padding:12px 0}
+.product-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.product-actions .btn{flex:1;min-width:160px;padding:16px;font-size:1rem}
+.product-meta{background:var(--cream);border-radius:16px;padding:20px}
+.product-meta h4{font-family:'Hind Siliguri',sans-serif;font-weight:600;font-size:1rem;color:var(--dark);margin-bottom:14px}
+.meta-item{display:flex;align-items:start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:.88rem}
 .meta-item:last-child{border:none}
-.meta-item .meta-icon{
-  font-size:1.1rem;
-  flex-shrink:0;
-}
-.meta-item .meta-text{
-  color:var(--mut);
-  line-height:1.5;
-}
-.meta-item .meta-text b{
-  color:var(--dark);
-  display:block;
-  margin-bottom:2px;
-}
-
-/* Related Products */
-.related-section{
-  margin-top:60px;
-}
-.related-section h2{
-  font-family:'Hind Siliguri',sans-serif;
-  font-weight:700;
-  font-size:1.5rem;
-  color:var(--dark);
-  margin-bottom:24px;
-  text-align:center;
-}
-
-@media(max-width:900px){
-  .product-layout{grid-template-columns:1fr}
-  .product-image-section{position:static}
-  .product-actions{flex-direction:column}
-}
+.meta-item .meta-icon{font-size:1.1rem;flex-shrink:0}
+.meta-item .meta-text{color:var(--mut);line-height:1.5}
+.meta-item .meta-text b{color:var(--dark);display:block;margin-bottom:2px}
+.related-section{margin-top:60px}
+.related-section h2{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:1.5rem;color:var(--dark);margin-bottom:24px;text-align:center}
+@media(max-width:900px){.product-layout{grid-template-columns:1fr}.product-image-section{position:static}.product-actions{flex-direction:column}}
 </style>
 </head>
 <body>
 
-<!-- Topbar -->
 <div class="topbar">
   <div class="wrap">
     <div class="tb-left">
-      <span class="tb-item">📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০-০০০০০০</span></a></span>
+      <span class="tb-item">📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></span>
       <span class="tb-item">⏰ সকাল ৯টা – রাত ৯টা</span>
     </div>
     <div class="tb-right">
@@ -293,7 +80,6 @@
   </div>
 </div>
 
-<!-- Header -->
 <header id="hdr">
   <div class="wrap hd">
     <a class="brand" href="index.html">
@@ -319,38 +105,31 @@
   </div>
 </header>
 
-<!-- Product Hero -->
-<section class="product-hero">
+<section class="product-hero" style="background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);color:#fff;padding:40px 0">
   <div class="wrap">
-    <div class="crumb">
-      <a href="index.html">হোম</a> / 
-      <a href="shop.html">বীজ ভাণ্ডার</a> / 
+    <div class="crumb" style="font-size:.87rem;opacity:.8;margin-bottom:8px">
+      <a href="index.html" style="color:var(--light)">হোম</a> / 
+      <a href="shop.html" style="color:var(--light)">বীজ ভাণ্ডার</a> / 
       <span id="breadcrumbName">পণ্য</span>
     </div>
   </div>
 </section>
 
-<!-- Product Content -->
 <section style="padding-top:0">
   <div class="wrap">
     <div class="product-layout">
-      <!-- Image -->
       <div class="product-image-section">
         <div class="product-image">
           <img id="productImage" src="" alt="">
         </div>
       </div>
-
-      <!-- Details -->
       <div class="product-details">
         <div class="product-category" id="productCategory"></div>
         <h1 class="product-title" id="productTitle"></h1>
-        
         <div class="product-rating">
           <span class="stars" id="productStars"></span>
           <span class="rating-text" id="productRatingText"></span>
         </div>
-
         <div class="product-price-box">
           <div class="product-price">
             <span id="productPrice"></span>
@@ -358,11 +137,8 @@
             <span class="discount" id="productDiscount" style="display:none"></span>
           </div>
         </div>
-
         <p class="product-description" id="productDescription"></p>
-
         <div class="product-stock" id="productStock"></div>
-
         <div class="quantity-section">
           <label>প্যাকেট সংখ্যা</label>
           <div class="quantity-selector">
@@ -371,47 +147,18 @@
             <button class="qty-btn" id="qtyPlus">+</button>
           </div>
         </div>
-
         <div class="product-actions">
           <button class="btn btn-gold" id="addToCartBtn">🧺 কার্টে যোগ করুন</button>
           <button class="btn btn-green" id="buyNowBtn">⚡ এখনই কিনুন</button>
         </div>
-
         <div class="product-meta">
           <h4>📦 ডেলিভারি ও সেবা</h4>
-          <div class="meta-item">
-            <span class="meta-icon">🚚</span>
-            <div class="meta-text">
-              <b>দ্রুত ডেলিভারি</b>
-              ঢাকায় ২৪ ঘণ্টা, বাইরে ২-৩ দিন
-            </div>
-          </div>
-          <div class="meta-item">
-            <span class="meta-icon">💵</span>
-            <div class="meta-text">
-              <b>ক্যাশ অন ডেলিভারি</b>
-              পণ্য হাতে পেয়ে টাকা দিন
-            </div>
-          </div>
-          <div class="meta-item">
-            <span class="meta-icon">🌱</span>
-            <div class="meta-text">
-              <b>বপন নির্দেশিকা</b>
-              প্রতিটি প্যাকেটের সাথে ফ্রি
-            </div>
-          </div>
-          <div class="meta-item">
-            <span class="meta-icon">☎</span>
-            <div class="meta-text">
-              <b>ফ্রি পরামর্শ</b>
-              যেকোনো প্রশ্নে কল করুন
-            </div>
-          </div>
+          <div class="meta-item"><span class="meta-icon">🚚</span><div class="meta-text"><b>দ্রুত ডেলিভারি</b>ঢাকায় ২৪ ঘণ্টা, বাইরে ২-৩ দিন</div></div>
+          <div class="meta-item"><span class="meta-icon">💵</span><div class="meta-text"><b>ক্যাশ অন ডেলিভারি</b>পণ্য হাতে পেয়ে টাকা দিন</div></div>
+          <div class="meta-item"><span class="meta-icon">🌱</span><div class="meta-text"><b>বপন নির্দেশিকা</b>প্রতিটি প্যাকেটের সাথে ফ্রি</div></div>
         </div>
       </div>
     </div>
-
-    <!-- Related Products -->
     <div class="related-section" id="relatedSection" style="display:none">
       <h2>একই ক্যাটাগরির আরও পণ্য</h2>
       <div class="grid" id="relatedGrid"></div>
@@ -419,36 +166,17 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
   <div class="wrap f-grid">
     <div class="f-brand">
       <span class="brand-t">মাঠ ফসল</span>
       <p>খামারে পরীক্ষিত খাঁটি ও হাইব্রিড বীজের নির্ভরযোগ্য ঠিকানা।</p>
-      <p>📞 <a href="tel:01700000000" data-tel><span data-phone>০৭০০-০০০০০০</span></a></p>
+      <p>📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></p>
       <p>📍 মাঠ ফসল খামার ও বীজ ভাণ্ডার, বগুড়া</p>
     </div>
-    <div>
-      <h5>দ্রুত লিংক</h5>
-      <a href="index.html">হোম</a>
-      <a href="shop.html">বীজ ভাণ্ডার</a>
-      <a href="cart.html">কার্ট</a>
-      <a href="track-order.html">অর্ডার ট্র্যাক</a>
-      <a href="contact.html">যোগাযোগ</a>
-    </div>
-    <div>
-      <h5>জনপ্রিয় জাত</h5>
-      <a href="shop.html">হাইব্রিড টমেটো</a>
-      <a href="shop.html">স্ট্রবেরি বীজ</a>
-      <a href="shop.html">চাইনিজ বাঁশ লাউ</a>
-      <a href="shop.html">বিগ বস কুমড়া</a>
-    </div>
-    <div>
-      <h5>সেবা</h5>
-      <p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p>
-      <p> প্রতিদিন সকাল ৯টা — রাত ৯টা</p>
-      <p>🌱 বপন পরামর্শ একদম ফ্রি</p>
-    </div>
+    <div><h5>দ্রুত লিংক</h5><a href="index.html">হোম</a><a href="shop.html">বীজ ভাণ্ডার</a><a href="cart.html">কার্ট</a><a href="track-order.html">অর্ডার ট্র্যাক</a><a href="contact.html">যোগাযোগ</a></div>
+    <div><h5>জনপ্রিয় জাত</h5><a href="shop.html">হাইব্রিড টমেটো</a><a href="shop.html">স্ট্রবেরি বীজ</a><a href="shop.html">চাইনিজ বাঁশ লাউ</a><a href="shop.html">বিগ বস কুমড়া</a></div>
+    <div><h5>সেবা</h5><p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p><p>⏰ প্রতিদিন সকাল ৯টা — রাত ৯টা</p><p>🌱 বপন পরামর্শ একদম ফ্রি</p></div>
   </div>
   <div class="wrap f-bottom">
     <span>© ২০২৫ মাঠ ফসল — সর্বস্বত্ব সংরক্ষিত</span>
@@ -467,26 +195,14 @@ let quantity=1;
 
 async function loadProduct(){
   const productId=new URLSearchParams(window.location.search).get('id');
-  if(!productId){
-    window.location.href='shop.html';
-    return;
-  }
-  
+  if(!productId){window.location.href='shop.html';return;}
   try{
     const products=await getAllProducts();
     product=products.find(p=>p.id===productId);
-    
-    if(!product){
-      document.body.innerHTML='<div style="text-align:center;padding:100px 20px"><h2>পণ্য পাওয়া যায়নি</h2><a href="shop.html" class="btn btn-gold" style="margin-top:20px">বীজ ভাণ্ডারে ফিরুন</a></div>';
-      return;
-    }
-    
+    if(!product){document.body.innerHTML='<div style="text-align:center;padding:100px 20px"><h2>পণ্য পাওয়া যায়নি</h2><a href="shop.html" class="btn btn-gold" style="margin-top:20px">বীজ ভাণ্ডারে ফিরুন</a></div>';return;}
     renderProduct();
     loadRelated(products);
-  }catch(err){
-    console.error(err);
-    alert('পণ্য লোড করা যায়নি');
-  }
+  }catch(err){console.error(err);alert('পণ্য লোড করা যায়নি');}
 }
 
 function renderProduct(){
@@ -496,39 +212,22 @@ function renderProduct(){
   document.getElementById('productImage').alt=product.name;
   document.getElementById('productCategory').innerHTML=catEmoji(product.cat)+' '+product.cat;
   document.getElementById('productTitle').textContent=product.name;
-  
   const rating=product.rating||4.5;
   document.getElementById('productStars').textContent='★'.repeat(Math.floor(rating))+'☆'.repeat(5-Math.floor(rating));
   document.getElementById('productRatingText').textContent=rating.toFixed(1)+' ('+Math.floor(rating*120)+'+ রিভিউ)';
-  
   document.getElementById('productPrice').textContent='৳'+product.price;
   if(product.old&&product.old>product.price){
-    const oldPriceEl=document.getElementById('productOldPrice');
-    oldPriceEl.textContent='৳'+product.old;
-    oldPriceEl.style.display='inline';
-    
+    document.getElementById('productOldPrice').textContent='৳'+product.old;
+    document.getElementById('productOldPrice').style.display='inline';
     const discount=Math.round((1-product.price/product.old)*100);
-    const discountEl=document.getElementById('productDiscount');
-    discountEl.textContent='-'+discount+'%';
-    discountEl.style.display='inline';
+    document.getElementById('productDiscount').textContent='-'+discount+'%';
+    document.getElementById('productDiscount').style.display='inline';
   }
-  
   document.getElementById('productDescription').textContent=product.desc||'কোনো বিবরণ যোগ করা হয়নি।';
-  
   const stockEl=document.getElementById('productStock');
-  if(product.stock<=0){
-    stockEl.className='product-stock out-of-stock';
-    stockEl.innerHTML='✗ স্টক শেষ';
-    document.getElementById('addToCartBtn').disabled=true;
-    document.getElementById('buyNowBtn').disabled=true;
-  }else if(product.stock<20){
-    stockEl.className='product-stock low-stock';
-    stockEl.innerHTML='⚡ মাত্র '+product.stock+' প্যাকেট বাকি!';
-  }else{
-    stockEl.className='product-stock in-stock';
-    stockEl.innerHTML='✓ স্টকে আছে ('+product.stock+' প্যাকেট)';
-  }
-  
+  if(product.stock<=0){stockEl.className='product-stock out-of-stock';stockEl.innerHTML='✗ স্টক শেষ';document.getElementById('addToCartBtn').disabled=true;document.getElementById('buyNowBtn').disabled=true;}
+  else if(product.stock<20){stockEl.className='product-stock low-stock';stockEl.innerHTML='⚡ মাত্র '+product.stock+' প্যাকেট বাকি!';}
+  else{stockEl.className='product-stock in-stock';stockEl.innerHTML='✓ স্টকে আছে ('+product.stock+' প্যাকেট)';}
   updateQuantityDisplay();
 }
 
@@ -538,22 +237,15 @@ function updateQuantityDisplay(){
   document.getElementById('qtyPlus').disabled=quantity>=product.stock;
 }
 
-document.getElementById('qtyMinus').addEventListener('click',()=>{
-  if(quantity>1){
-    quantity--;
-    updateQuantityDisplay();
-  }
-});
-
-document.getElementById('qtyPlus').addEventListener('click',()=>{
-  if(quantity<product.stock){
-    quantity++;
-    updateQuantityDisplay();
-  }
-});
+document.getElementById('qtyMinus').addEventListener('click',()=>{if(quantity>1){quantity--;updateQuantityDisplay();}});
+document.getElementById('qtyPlus').addEventListener('click',()=>{if(quantity<product.stock){quantity++;updateQuantityDisplay();}});
 
 document.getElementById('addToCartBtn').addEventListener('click',async()=>{
   await addToCart(product.id,quantity);
+  // Meta Pixel AddToCart Event
+  if(typeof fbq !== 'undefined'){
+    fbq('track', 'AddToCart', {value: product.price * quantity, currency: 'BDT', content_name: product.name});
+  }
 });
 
 document.getElementById('buyNowBtn').addEventListener('click',async()=>{
@@ -568,7 +260,6 @@ function loadRelated(allProducts){
     document.getElementById('relatedGrid').innerHTML=related.map(p=>productCard(p)).join('');
   }
 }
-
 loadProduct();
 </script>
 </body>
