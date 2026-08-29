@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>যোগাযোগ — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Contact-specific styles */
+.contact-hero{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 50%,var(--green) 100%);
+  color:#fff;
+  padding:80px 0 100px;
+  position:relative;
+  overflow:hidden;
+}
+.contact-hero::before{
+  content:"";
+  position:absolute;
+  top:-50%;
+  right:-20%;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,rgba(139,187,146,.2) 0%,transparent 70%);
+  border-radius:50%;
+}
+.contact-hero h1{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:12px;
+  position:relative;
+}
+.contact-hero p{
+  font-size:1.1rem;
+  opacity:.9;
+  max-width:50ch;
+  position:relative;
+}
+.contact-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+  margin-top:-50px;
+  position:relative;
+  z-index:2;
+}
+.contact-card{
+  background:#fff;
+  border-radius:20px;
+  padding:32px 28px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+  transition:transform .3s,box-shadow .3s;
+}
+.contact-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(9,35,40,.12);
+}
+.contact-icon{
+  width:60px;
+  height:60px;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--light) 0%,var(--green) 100%);
+  display:grid;
+  place-items:center;
+  font-size:1.6rem;
+  margin-bottom:18px;
+  box-shadow:0 6px 16px rgba(42,131,95,.25);
+}
+.contact-card h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.15rem;
+  color:var(--dark);
+  margin-bottom:8px;
+}
+.contact-card p{
+  color:var(--mut);
+  font-size:.93rem;
+  line-height:1.6;
+}
+.contact-card a{
+  color:var(--green);
+  font-weight:600;
+  transition:color .2s;
+}
+.contact-card a:hover{color:var(--dark2)}
+.contact-form-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  margin-top:60px;
+  align-items:start;
+}
+.contact-form{
+  background:#fff;
+  border-radius:20px;
+  padding:36px;
+  box-shadow:0 10px 40px rgba(9,35,40,.06);
+  border:1px solid var(--line);
+}
+.contact-form h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.5rem;
+  color:var(--dark);
+  margin-bottom:20px;
+}
+.contact-form .field{margin-bottom:18px}
+.contact-form .field label{
+  display:block;
+  font-weight:600;
+  font-size:.9rem;
+  color:var(--dark);
+  margin-bottom:6px;
+}
+.contact-form .field input,
+.contact-form .field textarea{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:.95rem;
+  transition:border-color .25s,box-shadow .25s;
+  background:var(--cream);
+}
+.contact-form .field input:focus,
+.contact-form .field textarea:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(42,131,95,.1);
+  outline:none;
+}
+.contact-form textarea{resize:vertical;min-height:120px}
+.contact-info-side{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);
+  border-radius:20px;
+  padding:36px;
+  color:#fff;
+}
+.contact-info-side h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  margin-bottom:20px;
+  color:var(--light);
+}
+.info-item{
+  display:flex;
+  gap:14px;
+  align-items:start;
+  margin-bottom:22px;
+  padding-bottom:22px;
+  border-bottom:1px solid rgba(139,187,146,.15);
+}
+.info-item:last-child{border:none;margin:0;padding:0}
+.info-item .ii-icon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:rgba(139,187,146,.15);
+  display:grid;
+  place-items:center;
+  font-size:1.2rem;
+  flex-shrink:0;
+}
+.info-item .ii-text b{
+  display:block;
+  font-size:.95rem;
+  margin-bottom:3px;
+  color:var(--light);
+}
+.info-item .ii-text span{
+  font-size:.88rem;
+  opacity:.8;
+}
+@media(max-width:768px){
+  .contact-form-wrap{grid-template-columns:1fr}
+  .contact-hero{padding:60px 0 80px}
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <span class="tb-item"> <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০</span></a></span>
+      <span class="tb-item">⏰ সকাল ৯টা – রাত ৯টা</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-item">🚚 সারাদেশে ডেলিভারি</span>
+      <span class="tb-item">🌱 ৯৮% গজানোর নিশ্চয়তা</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="hdr">
+  <div class="wrap hd">
+    <a class="brand" href="index.html">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 38V20M24 24c0-7 5-11 12-11 0 8-5 11-12 11zm0 4c0-6-4.5-9.5-10.5-9.5 0 7 4.5 9.5 10.5 9.5z" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-t">মাঠ ফসল</span>
+        <small>খাঁটি বীজ • নিশ্চিত ফলন</small>
+      </div>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html" class="act">যোগাযোগ</a>
+    </nav>
+    <div class="hd-tools">
+      <a class="cart-btn" href="cart.html"><span class="cart-icon">🧺</span><span class="cart-label">কার্ট</span><span id="cartCount"></span></a>
+      <button class="burger" id="burger" aria-label="মেনু"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- Contact Hero -->
+<section class="contact-hero">
+  <div class="wrap">
+    <h1>আমাদের সাথে <em style="color:var(--light);font-style:normal">যোগাযোগ</em> করুন</h1>
+    <p>যেকোনো প্রশ্ন, পরামর্শ বা অর্ডার সম্পর্কিত বিষয়ে আমরা সবসময় আপনার পাশে আছি।</p>
+  </div>
+</section>
+
+<!-- Contact Cards -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <h3>ফোনে কল করুন</h3>
+        <p>সকাল ৯টা থেকে রাত ৯টা পর্যন্ত<br><a href="tel:01700000000" data-tel><span data-phone>০১৭০-০০০০০০</span></a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon"></div>
+        <h3>হোয়াটসঅ্যাপ</h3>
+        <p>যেকোনো প্রশ্নে মেসেজ করুন<br><a href="https://wa.me/8801700000000" target="_blank">মেসেজ পাঠান →</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">📧</div>
+        <h3>ইমেইল</h3>
+        <p>বিস্তারিত বিষয়ে ইমেইল করুন<br><a href="mailto:info@mathfosal.com">info@mathfosal.com</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon"></div>
+        <h3>ঠিকানা</h3>
+        <p>মাঠ ফসল খামার ও বীজ ভাণ্ডার<br>বগুড়া, বাংলাদেশ</p>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form-wrap">
+      <form class="contact-form" id="contactForm">
+        <h2>📩 মেসেজ পাঠান</h2>
+        <div class="field">
+          <label>আপনার নাম *</label>
+          <input type="text" id="cf-name" placeholder="আপনার পূর্ণ নাম" required>
+        </div>
+        <div class="field">
+          <label>মোবাইল নম্বর *</label>
+          <input type="tel" id="cf-phone" placeholder="01XXXXXXXXX" required>
+        </div>
+        <div class="field">
+          <label>ইমেইল</label>
+          <input type="email" id="cf-email" placeholder="your@email.com">
+        </div>
+        <div class="field">
+          <label>বিষয়</label>
+          <input type="text" id="cf-subject" placeholder="মেসেজের বিষয়">
+        </div>
+        <div class="field">
+          <label>মেসেজ *</label>
+          <textarea id="cf-message" rows="5" placeholder="আপনার মেসেজ লিখুন..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%"> মেসেজ পাঠান</button>
+      </form>
+
+      <div class="contact-info-side">
+        <h3>কেন আমাদের বেছে নেবেন?</h3>
+        <div class="info-item">
+          <div class="ii-icon">🌱</div>
+          <div class="ii-text">
+            <b>৯৮% গজানোর নিশ্চয়তা</b>
+            <span>প্রতিটি লট বপন-পরীক্ষার পর প্যাকেটজাত</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="ii-icon">🚚</div>
+          <div class="ii-text">
+            <b>দ্রুত ডেলিভারি</b>
+            <span>২-৭২ ঘণ্টার মধ্যে সারাদেশে</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="ii-icon"></div>
+          <div class="ii-text">
+            <b>ক্যাশ অন ডেলিভারি</b>
+            <span>পণ্য হাতে পেয়ে টাকা দিন</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="ii-icon">🎓</div>
+          <div class="ii-text">
+            <b>বপন পরামর্শ ফ্রি</b>
+            <span>অভিজ্ঞ কৃষিবিদদের কাছ থেকে</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap f-grid">
+    <div class="f-brand">
+      <span class="brand-t">মাঠ ফসল</span>
+      <p>খামারে পরীক্ষিত খাঁটি ও হাইব্রিড বীজের নির্ভরযোগ্য ঠিকানা।</p>
+      <p> <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০</span></a></p>
+      <p>📍 মাঠ ফসল খামার ও বীজ ভাণ্ডার, বগুড়া</p>
+    </div>
+    <div>
+      <h5>দ্রুত লিংক</h5>
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </div>
+    <div>
+      <h5>জনপ্রিয় জাত</h5>
+      <a href="shop.html">হাইব্রিড টমেটো</a>
+      <a href="shop.html">স্ট্রবেরি বীজ</a>
+      <a href="shop.html">চাইনিজ বাঁশ লাউ</a>
+      <a href="shop.html">বিগ বস কুমড়া</a>
+    </div>
+    <div>
+      <h5>সেবা</h5>
+      <p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p>
+      <p>⏰ প্রতিদিন সকাল ৯টা — রাত টা</p>
+      <p> বপন পরামর্শ একদম ফ্রি</p>
+    </div>
+  </div>
+  <div class="wrap f-bottom">
+    <span>© ২০২৫ মাঠ ফসল — সর্বস্বত্ব সংরক্ষিত</span>
+    <a class="adm-link" href="login.html">🔒 অ্যাডমিন লগইন</a>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.getElementById('contactForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const name=document.getElementById('cf-name').value.trim();
+  const phone=document.getElementById('cf-phone').value.trim();
+  const email=document.getElementById('cf-email').value.trim();
+  const subject=document.getElementById('cf-subject').value.trim();
+  const message=document.getElementById('cf-message').value.trim();
+  
+  if(!name||!phone||!message){
+    alert('নাম, ফোন ও মেসেজ আবশ্যক');
+    return;
+  }
+  
+  try{
+    await db.collection('contacts').add({
+      name,phone,email,subject,message,
+      date:Date.now(),
+      status:'new'
+    });
+    alert('✓ আপনার মেসেজ পাঠানো হয়েছে! শীঘ্রই আমরা যোগাযোগ করব।');
+    e.target.reset();
+  }catch(err){
+    alert('মেসেজ পাঠানো যায়নি। আবার চেষ্টা করুন।');
+  }
+});
+</script>
+</body>
+</html>
