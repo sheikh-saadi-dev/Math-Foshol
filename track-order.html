@@ -1,22 +1,504 @@
-<div class="page-head"><div class="wrap">
- <div class="crumb"><a href="index.html">হোম</a> / অর্ডার ট্র্যাক</div>
- <h1>অর্ডার <em>ট্র্যাক করুন</em></h1>
-</div></div>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>অর্ডার ট্র্যাক — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Track-specific styles */
+.track-hero{
+  background:linear-gradient(135deg,var(--dark2) 0%,var(--green) 100%);
+  color:#fff;
+  padding:60px 0;
+  position:relative;
+  overflow:hidden;
+}
+.track-hero::after{
+  content:"📦";
+  position:absolute;
+  right:5%;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:8rem;
+  opacity:.08;
+}
+.track-hero h1{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:clamp(1.8rem,3.5vw,2.5rem);
+  margin-bottom:8px;
+}
+.track-hero .crumb{
+  font-size:.87rem;
+  opacity:.8;
+}
+.track-hero .crumb a{color:var(--light)}
 
-<section><div class="wrap" style="max-width:760px">
- <div class="panel">
-  <p style="margin-bottom:14px;color:var(--mut)">অর্ডার করার সময় যে মোবাইল নম্বর দিয়েছিলেন সেটি লিখুন — সব অর্ডারের অবস্থা দেখুন।</p>
-  <form id="trForm" style="display:flex;gap:12px;flex-wrap:wrap">
-   <div class="field" style="flex:1;min-width:220px;margin:0"><input id="trPhone" inputmode="tel" placeholder="01XXXXXXXXX"></div>
-   <button class="btn btn-green" type="submit">🔍 খুঁজুন</button>
-  </form>
- </div>
- <div id="trResults" style="margin-top:26px"></div>
-</div></section>
+.track-search{
+  background:#fff;
+  border-radius:20px;
+  padding:32px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+  margin-top:-40px;
+  position:relative;
+  z-index:2;
+}
+.track-search h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--dark);
+  margin-bottom:12px;
+}
+.track-search p{
+  color:var(--mut);
+  margin-bottom:20px;
+  font-size:.93rem;
+}
+.track-form{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.track-form input{
+  flex:1;
+  min-width:250px;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:14px 18px;
+  font-size:1rem;
+  transition:all .25s;
+}
+.track-form input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(42,131,95,.1);
+  outline:none;
+}
+.track-form button{
+  padding:14px 32px;
+  font-size:1rem;
+}
+
+.track-results{
+  margin-top:40px;
+}
+.track-results h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.2rem;
+  color:var(--dark);
+  margin-bottom:20px;
+}
+
+.order-card{
+  background:#fff;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 10px 40px rgba(9,35,40,.06);
+  border:1px solid var(--line);
+  margin-bottom:20px;
+  animation:slideUp .4s;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:20px;
+  padding-bottom:16px;
+  border-bottom:2px solid var(--line);
+}
+.order-id{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.15rem;
+  color:var(--dark);
+}
+.order-status{
+  padding:6px 16px;
+  border-radius:50px;
+  font-size:.82rem;
+  font-weight:700;
+}
+.status-pending{background:#f5ecd0;color:#7a6a10}
+.status-confirmed{background:#dbeafe;color:#1e40af}
+.status-shipped{background:#e6e0f6;color:#5b3fa8}
+.status-delivered{background:#d9f0dd;color:#1f6b38}
+.status-cancelled{background:#fde0da;color:var(--red)}
+
+.order-info{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
+.info-block{
+  background:var(--cream);
+  border-radius:12px;
+  padding:14px 18px;
+}
+.info-block .ib-label{
+  font-size:.78rem;
+  color:var(--mut);
+  margin-bottom:4px;
+  font-weight:600;
+}
+.info-block .ib-value{
+  font-weight:600;
+  color:var(--dark);
+  font-size:.95rem;
+}
+
+.order-items{
+  background:var(--cream);
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:20px;
+}
+.order-items h4{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:600;
+  font-size:.95rem;
+  color:var(--dark);
+  margin-bottom:12px;
+}
+.oi-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px dashed var(--line);
+  font-size:.9rem;
+}
+.oi-item:last-child{border:none}
+.oi-item .oi-name{color:var(--dark)}
+.oi-item .oi-qty{color:var(--mut)}
+.oi-item .oi-price{font-weight:700;color:var(--green)}
+
+/* Timeline */
+.order-timeline{
+  margin-top:24px;
+}
+.order-timeline h4{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:600;
+  font-size:.95rem;
+  color:var(--dark);
+  margin-bottom:16px;
+}
+.timeline{
+  display:flex;
+  justify-content:space-between;
+  position:relative;
+  padding:20px 0;
+}
+.timeline::before{
+  content:"";
+  position:absolute;
+  top:35px;
+  left:10%;
+  right:10%;
+  height:3px;
+  background:var(--line);
+  z-index:0;
+}
+.timeline-step{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  flex:1;
+}
+.timeline-step .ts-icon{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:#dce6de;
+  color:var(--mut);
+  display:grid;
+  place-items:center;
+  margin:0 auto 8px;
+  font-weight:700;
+  font-size:1.1rem;
+  transition:all .3s;
+}
+.timeline-step.done .ts-icon{
+  background:var(--green);
+  color:#fff;
+}
+.timeline-step.current .ts-icon{
+  background:var(--light);
+  color:var(--dark);
+  box-shadow:0 0 0 6px rgba(139,187,146,.3);
+}
+.timeline-step .ts-label{
+  font-size:.78rem;
+  color:var(--mut);
+  font-weight:500;
+}
+.timeline-step.done .ts-label,
+.timeline-step.current .ts-label{
+  color:var(--dark);
+  font-weight:600;
+}
+
+.empty-track{
+  text-align:center;
+  padding:60px 20px;
+}
+.empty-track .empty-icon{
+  font-size:5rem;
+  margin-bottom:20px;
+  opacity:.3;
+}
+.empty-track h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--dark);
+  margin-bottom:10px;
+}
+.empty-track p{
+  color:var(--mut);
+}
+
+@media(max-width:768px){
+  .timeline{flex-wrap:wrap;gap:20px}
+  .timeline::before{display:none}
+  .timeline-step{flex:0 0 45%}
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <span class="tb-item">📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></span>
+      <span class="tb-item">⏰ সকাল ৯টা – রাত ৯টা</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-item">🚚 সারাদেশে ডেলিভারি</span>
+      <span class="tb-item">🌱 ৯৮% গজানোর নিশ্চয়তা</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="hdr">
+  <div class="wrap hd">
+    <a class="brand" href="index.html">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 38V20M24 24c0-7 5-11 12-11 0 8-5 11-12 11zm0 4c0-6-4.5-9.5-10.5-9.5 0 7 4.5 9.5 10.5 9.5z" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-t">মাঠ ফসল</span>
+        <small>খাঁটি বীজ • নিশ্চিত ফলন</small>
+      </div>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html" class="act">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </nav>
+    <div class="hd-tools">
+      <a class="cart-btn" href="cart.html"><span class="cart-icon">🧺</span><span class="cart-label">কার্ট</span><span id="cartCount">০</span></a>
+      <button class="burger" id="burger" aria-label="মেনু"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- Track Hero -->
+<section class="track-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="index.html">হোম</a> / অর্ডার ট্র্যাক</div>
+    <h1>অর্ডার <em style="color:var(--light);font-style:normal">ট্র্যাক করুন</em></h1>
+  </div>
+</section>
+
+<!-- Track Content -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <!-- Search -->
+    <div class="track-search">
+      <h2>🔍 আপনার অর্ডার খুঁজুন</h2>
+      <p>অর্ডার করার সময় যে মোবাইল নম্বর দিয়েছিলেন সেটি লিখুন — সব অর্ডারের অবস্থা দেখুন।</p>
+      <form class="track-form" id="trackForm">
+        <input type="tel" id="trackPhone" placeholder="01XXXXXXXXX" required>
+        <button type="submit" class="btn btn-gold"> খুঁজুন</button>
+      </form>
+    </div>
+
+    <!-- Results -->
+    <div class="track-results" id="trackResults"></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap f-grid">
+    <div class="f-brand">
+      <span class="brand-t">মাঠ ফসল</span>
+      <p>খামারে পরীক্ষিত খাঁটি ও হাইব্রিড বীজের নির্ভরযোগ্য ঠিকানা।</p>
+      <p>📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></p>
+      <p>📍 মাঠ ফসল খামার ও বীজ ভাণ্ডার, বগুড়া</p>
+    </div>
+    <div>
+      <h5>দ্রুত লিংক</h5>
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </div>
+    <div>
+      <h5>জনপ্রিয় জাত</h5>
+      <a href="shop.html">হাইব্রিড টমেটো</a>
+      <a href="shop.html">স্ট্রবেরি বীজ</a>
+      <a href="shop.html">চাইনিজ বাঁশ লাউ</a>
+      <a href="shop.html">বিগ বস কুমড়া</a>
+    </div>
+    <div>
+      <h5>সেবা</h5>
+      <p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p>
+      <p>⏰ প্রতিদিন সকাল ৯টা — রাত ৯টা</p>
+      <p>🌱 বপন পরামর্শ একদম ফ্রি</p>
+    </div>
+  </div>
+  <div class="wrap f-bottom">
+    <span>© ২০২৫ মাঠ ফসল — সর্বস্বত্ব সংরক্ষিত</span>
+    <a class="adm-link" href="login.html">🔒 অ্যাডমিন লগইন</a>
+  </div>
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/track.js"></script>
+<script>
+const STEPS=['pending','confirmed','shipped','delivered'];
+const STEP_LABELS={
+  pending:'অর্ডার হয়েছে',
+  confirmed:'নিশ্চিত',
+  shipped:'পাঠানো হয়েছে',
+  delivered:'ডেলিভারড'
+};
+const STATUS_BN={
+  pending:'অপেক্ষমাণ',
+  confirmed:'নিশ্চিত',
+  shipped:'পাঠানো হয়েছে',
+  delivered:'ডেলিভারড',
+  cancelled:'বাতিল'
+};
+
+document.getElementById('trackForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  
+  const phone=document.getElementById('trackPhone').value.trim();
+  if(!/^01[3-9]\d{8}$/.test(phone)){
+    alert('সঠিক মোবাইল নম্বর দিন');
+    return;
+  }
+  
+  const results=document.getElementById('trackResults');
+  results.innerHTML='<p class="loading">খোঁজা হচ্ছে…</p>';
+  
+  try{
+    const snap=await db.collection('orders').where('phone','==',phone).get();
+    const orders=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.date||0)-(a.date||0));
+    
+    if(!orders.length){
+      results.innerHTML=`
+        <div class="empty-track">
+          <div class="empty-icon">📦</div>
+          <h3>কোনো অর্ডার পাওয়া যায়নি</h3>
+          <p>এই নম্বরে কোনো অর্ডার নেই। সঠিক নম্বর দিয়ে আবার চেষ্টা করুন।</p>
+        </div>
+      `;
+      return;
+    }
+    
+    results.innerHTML=`<h3>📦 ${orders.length}টি অর্ডার পাওয়া গেছে</h3>`+
+      orders.map(order=>{
+        const stepIdx=order.status==='cancelled'?-1:STEPS.indexOf(order.status);
+        const date=new Date(order.date).toLocaleDateString('bn-BD',{
+          year:'numeric',
+          month:'long',
+          day:'numeric'
+        });
+        
+        return `
+          <div class="order-card">
+            <div class="order-header">
+              <div class="order-id">🆔 ${order.id}</div>
+              <div class="order-status status-${order.status}">${STATUS_BN[order.status]}</div>
+            </div>
+            
+            <div class="order-info">
+              <div class="info-block">
+                <div class="ib-label">📅 অর্ডারের তারিখ</div>
+                <div class="ib-value">${date}</div>
+              </div>
+              <div class="info-block">
+                <div class="ib-label">👤 ক্রেতার নাম</div>
+                <div class="ib-value">${order.name}</div>
+              </div>
+              <div class="info-block">
+                <div class="ib-label">📍 ঠিকানা</div>
+                <div class="ib-value">${order.address}</div>
+              </div>
+              <div class="info-block">
+                <div class="ib-label">💳 পেমেন্ট</div>
+                <div class="ib-value">${order.payment}</div>
+              </div>
+            </div>
+            
+            <div class="order-items">
+              <h4>🌱 অর্ডারকৃত পণ্য</h4>
+              ${order.items.map(item=>`
+                <div class="oi-item">
+                  <span class="oi-name">${item.name}</span>
+                  <span class="oi-qty">×${item.qty}</span>
+                  <span class="oi-price">৳${item.price*item.qty}</span>
+                </div>
+              `).join('')}
+            </div>
+            
+            <div style="text-align:right;font-size:1.1rem;font-weight:700;color:var(--dark);margin-top:16px">
+              সর্বমোট: ৳${order.total}
+            </div>
+            
+            ${order.status!=='cancelled'?`
+              <div class="order-timeline">
+                <h4>📍 ডেলিভারি অবস্থা</h4>
+                <div class="timeline">
+                  ${STEPS.map((step,i)=>`
+                    <div class="timeline-step ${i<stepIdx?'done':''} ${i===stepIdx?'current':''}">
+                      <div class="ts-icon">${i<stepIdx?'✓':i+1}</div>
+                      <div class="ts-label">${STEP_LABELS[step]}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `:''}
+          </div>
+        `;
+      }).join('');
+      
+  }catch(err){
+    console.error(err);
+    results.innerHTML='<p style="text-align:center;color:var(--red);padding:40px">খুঁজতে সমস্যা হয়েছে। আবার চেষ্টা করুন।</p>';
+  }
+});
+</script>
+</body>
+</html>
