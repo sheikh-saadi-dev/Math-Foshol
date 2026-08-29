@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>অ্যাডমিন প্যানেল — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Galada&family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="adm-top">
+ <span class="brand-t">মাঠ ফসল</span><span class="tag">অ্যাডমিন প্যানেল</span>
+ <span class="adm-email" id="admEmail"></span>
+ <span class="sp"></span>
+ <a class="btn btn-sm btn-ghost" href="../index.html">🌐 সাইট দেখুন</a>
+ <button class="btn btn-sm btn-gold" id="admExit">লগআউট</button>
+</div>
+
+<div class="wrap">
+ <div class="atabs">
+  <button class="atab on" data-tab="dash">📊 ড্যাশবোর্ড</button>
+  <button class="atab" data-tab="prod">🌱 পণ্য ব্যবস্থাপনা</button>
+  <button class="atab" data-tab="ord">📦 অর্ডারসমূহ</button>
+  <button class="atab" data-tab="set">⚙️ সেটিংস</button>
+ </div>
+
+ <!-- ড্যাশবোর্ড -->
+ <div class="tsec on" id="tab-dash">
+  <div class="stat-row">
+   <div class="stat"><div class="sv" id="stProds">০</div><div class="sl">মোট পণ্য</div></div>
+   <div class="stat"><div class="sv" id="stPend">০</div><div class="sl">অপেক্ষমাণ অর্ডার</div></div>
+   <div class="stat"><div class="sv" id="stDeliv">০</div><div class="sl">ডেলিভারড অর্ডার</div></div>
+   <div class="stat"><div class="sv" id="stSales">৳০</div><div class="sl">মোট বিক্রি (বাতিল বাদে)</div></div>
+  </div>
+  <div id="seedBox"></div>
+  <h3 class="ff-t" style="margin-bottom:14px">সাম্প্রতিক অর্ডার</h3>
+  <div class="tbl-scroll"><table class="adm-table"><thead><tr><th>অর্ডার</th><th>ক্রেতা</th><th>তারিখ</th><th>মোট</th><th>স্ট্যাটাস</th></tr></thead><tbody id="recentTbl"></tbody></table></div>
+ </div>
+
+ <!-- পণ্য -->
+ <div class="tsec" id="tab-prod">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+   <h3 class="ff-t">সব পণ্য</h3>
+   <button class="btn btn-gold btn-sm" id="addProdBtn">＋ নতুন পণ্য যোগ করুন</button>
+  </div>
+  <div class="panel" id="prodForm" style="display:none;margin-bottom:26px">
+   <h3 class="ff-t" id="pfTitle" style="margin-bottom:16px">নতুন পণ্য</h3>
+   <form id="pfForm"><input type="hidden" id="pf-id">
+    <div class="form-grid">
+     <div class="field full"><label>পণ্যের নাম *</label><input id="pf-name" placeholder="যেমন: হাইব্রিড টমেটো বীজ" required></div>
+     <div class="field"><label>ক্যাটাগরি *</label><input id="pf-cat" list="catsList" placeholder="যেমন: সবজি বীজ" required><datalist id="catsList"></datalist></div>
+     <div class="field"><label>ব্যাজ টেক্সট</label><input id="pf-badge" placeholder="হাইব্রিড / নতুন / দেশি"></div>
+     <div class="field"><label>বিক্রয় মূল্য (৳) *</label><input id="pf-price" type="number" min="1" required></div>
+     <div class="field"><label>আগের মূল্য (৳)</label><input id="pf-old" type="number" min="0" placeholder="ছাড় দেখাতে"></div>
+     <div class="field"><label>স্টক (প্যাকেট) *</label><input id="pf-stock" type="number" min="0" required></div>
+     <div class="field"><label>রেটিং (০–৫)</label><input id="pf-rate" type="number" step="0.1" min="0" max="5" value="4.8"></div>
+     <div class="field full"><label>বিবরণ</label><textarea id="pf-desc" rows="2" placeholder="সংক্ষিপ্ত বিবরণ…"></textarea></div>
+     <div class="field"><label>ছবি আপলোড (ফায়ারবেজ স্টোরেজ)</label><input id="pf-imgfile" type="file" accept="image/*"><div class="upbar" id="pf-upbar"><i id="pf-upfill"></i></div><p class="hint">সর্বোচ্চ ২ মেগাবাইট</p></div>
+     <div class="field"><label>অথবা ছবির লিংক</label><input id="pf-imgurl" placeholder="https://…"></div>
+     <div class="field full" style="display:flex;align-items:center;gap:14px"><img id="pf-prev" src="" alt="" style="width:84px;height:84px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--line)"><span class="hint" id="pf-prev-txt">ছবির প্রিভিউ</span></div>
+    </div>
+    <button class="btn btn-green btn-sm" type="submit" id="pf-save">💾 সংরক্ষণ করুন</button>
+    <button class="btn btn-sm" type="button" id="pf-cancel" style="background:#eee;border-radius:10px;margin-left:8px">বাতিল</button>
+   </form>
+  </div>
+  <div class="tbl-scroll"><table class="adm-table"><thead><tr><th>ছবি</th><th>নাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>স্টক</th><th>অ্যাকশন</th></tr></thead><tbody id="prodTbl"></tbody></table></div>
+ </div>
+
+ <!-- অর্ডার -->
+ <div class="tsec" id="tab-ord">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+   <h3 class="ff-t">সব অর্ডার</h3>
+   <select id="ordFilter">
+    <option value="all">সব স্ট্যাটাস</option><option value="pending">অপেক্ষমাণ</option>
+    <option value="confirmed">নিশ্চিত</option><option value="shipped">পাঠানো হয়েছে</option>
+    <option value="delivered">ডেলিভারড</option><option value="cancelled">বাতিল</option>
+   </select>
+  </div>
+  <div id="ordList"></div>
+ </div>
+
+ <!-- সেটিংস -->
+ <div class="tsec" id="tab-set">
+  <div class="panel">
+   <h3 class="ff-t" style="margin-bottom:16px">দোকান সেটিংস</h3>
+   <div class="form-grid">
+    <div class="field"><label>ঢাকা সিটি ডেলিভারি চার্জ (৳)</label><input id="set-city" type="number" min="0"></div>
+    <div class="field"><label>ঢাকার বাইরে ডেলিভারি চার্জ (৳)</label><input id="set-out" type="number" min="0"></div>
+    <div class="field full"><label>হটলাইন নম্বর</label><input id="set-phone" placeholder="01700-000000"></div>
+   </div>
+   <button class="btn btn-green btn-sm" id="saveSet">সংরক্ষণ করুন</button>
+  </div>
+  <div class="panel">
+   <h3 class="ff-t" style="margin-bottom:10px">অ্যাডমিন অ্যাকাউন্ট</h3>
+   <p class="hint">পাসওয়ার্ড বা নতুন অ্যাডমিন যোগ করতে: Firebase Console → Authentication → Users।</p>
+  </div>
+ </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
