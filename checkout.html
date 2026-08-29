@@ -7,6 +7,23 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+  <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1029009349970448');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1029009349970448&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <style>
 /* Checkout-specific styles */
 .checkout-hero{
@@ -554,7 +571,6 @@ function renderSummary(){
 
 document.getElementById('checkoutForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  
   const name=document.getElementById('co-name').value.trim();
   const phone=document.getElementById('co-phone').value.trim();
   const email=document.getElementById('co-email').value.trim();
@@ -562,36 +578,14 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
   const payment=document.querySelector('input[name="payment"]:checked').value;
   
   let valid=true;
+  if(name.length<2){document.getElementById('co-name').parentElement.classList.add('bad');valid=false;}else{document.getElementById('co-name').parentElement.classList.remove('bad');}
+  if(!/^01[3-9]\d{8}$/.test(phone)){document.getElementById('co-phone').parentElement.classList.add('bad');valid=false;}else{document.getElementById('co-phone').parentElement.classList.remove('bad');}
+  if(address.length<8){document.getElementById('co-address').parentElement.classList.add('bad');valid=false;}else{document.getElementById('co-address').parentElement.classList.remove('bad');}
   
-  if(name.length<2){
-    document.getElementById('co-name').parentElement.classList.add('bad');
-    valid=false;
-  }else{
-    document.getElementById('co-name').parentElement.classList.remove('bad');
-  }
-  
-  if(!/^01[3-9]\d{8}$/.test(phone)){
-    document.getElementById('co-phone').parentElement.classList.add('bad');
-    valid=false;
-  }else{
-    document.getElementById('co-phone').parentElement.classList.remove('bad');
-  }
-  
-  if(address.length<8){
-    document.getElementById('co-address').parentElement.classList.add('bad');
-    valid=false;
-  }else{
-    document.getElementById('co-address').parentElement.classList.remove('bad');
-  }
-  
-  if(!valid){
-    alert('সব ঘর সঠিকভাবে পূরণ করুন');
-    return;
-  }
+  if(!valid){alert('সব ঘর সঠিকভাবে পূরণ করুন');return;}
   
   const btn=document.getElementById('placeOrderBtn');
-  btn.disabled=true;
-  btn.textContent='অর্ডার প্রক্রিয়া হচ্ছে…';
+  btn.disabled=true;btn.textContent='অর্ডার প্রক্রিয়া হচ্ছে…';
   
   const items=getCartItems();
   const totals=calculateTotals();
@@ -599,33 +593,27 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
   
   try{
     await db.collection('orders').doc(orderId).set({
-      items:items.map(i=>({
-        id:i.product.id,
-        name:i.product.name,
-        price:i.product.price,
-        qty:i.qty
-      })),
-      subtotal:totals.subtotal,
-      shipping:totals.shipping,
-      total:totals.total,
-      name,
-      phone,
-      email,
-      address,
-      payment,
-      status:'pending',
-      date:Date.now()
+      items:items.map(i=>({id:i.product.id,name:i.product.name,price:i.product.price,qty:i.qty})),
+      subtotal:totals.subtotal,shipping:totals.shipping,total:totals.total,
+      name,phone,email,address,payment,status:'pending',date:Date.now()
     });
     
+    // Meta Pixel Purchase Event
+    if(typeof fbq !== 'undefined'){
+      fbq('track', 'Purchase', {
+        value: totals.total,
+        currency: 'BDT',
+        content_ids: items.map(i => i.product.id),
+        content_type: 'product'
+      });
+    }
+
     setCart([]);
     document.getElementById('successOrderId').textContent=orderId;
     document.getElementById('successModal').classList.add('show');
-    
   }catch(err){
-    console.error(err);
-    alert('অর্ডার করা যায়নি। আবার চেষ্টা করুন।');
-    btn.disabled=false;
-    btn.textContent='✓ অর্ডার নিশ্চিত করুন';
+    console.error(err);alert('অর্ডার করা যায়নি। আবার চেষ্টা করুন।');
+    btn.disabled=false;btn.textContent='✓ অর্ডার নিশ্চিত করুন';
   }
 });
 
