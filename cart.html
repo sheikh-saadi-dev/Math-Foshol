@@ -1,15 +1,582 @@
-<div class="page-head"><div class="wrap">
- <div class="crumb"><a href="index.html">হোম</a> / কার্ট</div>
- <h1>আপনার <em>কার্ট</em></h1>
-</div></div>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>আপনার কার্ট — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Cart-specific styles */
+.cart-hero{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);
+  color:#fff;
+  padding:60px 0;
+  position:relative;
+  overflow:hidden;
+}
+.cart-hero::after{
+  content:"";
+  position:absolute;
+  right:5%;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:8rem;
+  opacity:.08;
+}
+.cart-hero h1{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:clamp(1.8rem,3.5vw,2.5rem);
+  margin-bottom:8px;
+}
+.cart-hero .crumb{
+  font-size:.87rem;
+  opacity:.8;
+}
+.cart-hero .crumb a{color:var(--light)}
+.cart-hero .crumb a:hover{color:#fff}
 
-<section><div class="wrap">
- <div id="cartBox"><p class="loading">লোড হচ্ছে…</p></div>
-</div></section>
+.cart-layout{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:30px;
+  margin-top:-40px;
+  position:relative;
+  z-index:2;
+}
+
+.cart-items-panel{
+  background:#fff;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+}
+.cart-items-panel h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--dark);
+  margin-bottom:20px;
+  padding-bottom:14px;
+  border-bottom:2px solid var(--line);
+}
+
+.cart-item{
+  display:grid;
+  grid-template-columns:90px 1fr auto;
+  gap:18px;
+  padding:20px 0;
+  border-bottom:1px dashed var(--line);
+  align-items:center;
+}
+.cart-item:last-child{border:none}
+.cart-item-img{
+  width:90px;
+  height:90px;
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--cream);
+}
+.cart-item-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.cart-item-info h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:600;
+  font-size:1.05rem;
+  color:var(--dark);
+  margin-bottom:6px;
+  line-height:1.4;
+}
+.cart-item-info h3 a{color:var(--dark);transition:color .2s}
+.cart-item-info h3 a:hover{color:var(--green)}
+.cart-item-info .item-price{
+  color:var(--green);
+  font-weight:700;
+  font-size:.95rem;
+  margin-bottom:10px;
+}
+
+/* Quantity Selector */
+.qty-selector{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+  background:var(--cream);
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:8px;
+}
+.qty-btn{
+  width:38px;
+  height:38px;
+  border:none;
+  background:transparent;
+  color:var(--dark);
+  font-size:1.2rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+  display:grid;
+  place-items:center;
+}
+.qty-btn:hover{
+  background:var(--green);
+  color:#fff;
+}
+.qty-btn:disabled{
+  opacity:.3;
+  cursor:not-allowed;
+}
+.qty-btn:disabled:hover{
+  background:transparent;
+  color:var(--dark);
+}
+.qty-value{
+  min-width:50px;
+  text-align:center;
+  font-weight:700;
+  font-size:1.05rem;
+  color:var(--dark);
+  border-left:1px solid var(--line);
+  border-right:1px solid var(--line);
+  padding:8px 0;
+}
+
+.cart-item-actions{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+.cart-item-total{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.15rem;
+  color:var(--dark);
+}
+.remove-btn{
+  background:none;
+  border:none;
+  color:var(--mut);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:color .2s;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.remove-btn:hover{color:var(--red)}
+
+/* Summary Panel */
+.cart-summary{
+  background:#fff;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+  position:sticky;
+  top:100px;
+  height:fit-content;
+}
+.cart-summary h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--dark);
+  margin-bottom:20px;
+  padding-bottom:14px;
+  border-bottom:2px solid var(--line);
+}
+
+.delivery-options{
+  margin-bottom:20px;
+}
+.delivery-options label{
+  font-weight:600;
+  font-size:.9rem;
+  color:var(--dark);
+  margin-bottom:10px;
+  display:block;
+}
+.delivery-opts{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.delivery-opt{
+  position:relative;
+}
+.delivery-opt input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.delivery-opt label{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .25s;
+  font-weight:500;
+  font-size:.9rem;
+  margin:0;
+}
+.delivery-opt input:checked+label{
+  border-color:var(--green);
+  background:rgba(42,131,95,.06);
+  font-weight:600;
+}
+.delivery-opt label .opt-icon{
+  font-size:1.2rem;
+}
+.delivery-opt label .opt-price{
+  margin-left:auto;
+  font-weight:700;
+  color:var(--green);
+}
+
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  font-size:.95rem;
+  color:var(--mut);
+}
+.summary-row.total{
+  border-top:2px solid var(--line);
+  margin-top:10px;
+  padding-top:16px;
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--dark);
+}
+.summary-row.total span:last-child{
+  color:var(--green);
+  font-size:1.3rem;
+}
+
+.checkout-btn{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  font-size:1.05rem;
+}
+
+.empty-cart{
+  text-align:center;
+  padding:60px 20px;
+}
+.empty-cart .empty-icon{
+  font-size:5rem;
+  margin-bottom:20px;
+  opacity:.3;
+}
+.empty-cart h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.4rem;
+  color:var(--dark);
+  margin-bottom:10px;
+}
+.empty-cart p{
+  color:var(--mut);
+  margin-bottom:24px;
+}
+
+@media(max-width:900px){
+  .cart-layout{grid-template-columns:1fr}
+  .cart-summary{position:static}
+  .cart-item{grid-template-columns:70px 1fr;gap:14px}
+  .cart-item-actions{
+    grid-column:1/-1;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--line);
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <span class="tb-item"> <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></span>
+      <span class="tb-item">⏰ সকাল ৯টা – রাত ৯টা</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-item">🚚 সারাদেশে ডেলিভারি</span>
+      <span class="tb-item">🌱 ৯৮% গজানোর নিশ্চয়তা</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="hdr">
+  <div class="wrap hd">
+    <a class="brand" href="index.html">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 38V20M24 24c0-7 5-11 12-11 0 8-5 11-12 11zm0 4c0-6-4.5-9.5-10.5-9.5 0 7 4.5 9.5 10.5 9.5z" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-t">মাঠ ফসল</span>
+        <small>খাঁটি বীজ • নিশ্চিত ফলন</small>
+      </div>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html" class="act">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </nav>
+    <div class="hd-tools">
+      <a class="cart-btn" href="cart.html"><span class="cart-icon">🧺</span><span class="cart-label">কার্ট</span><span id="cartCount">০</span></a>
+      <button class="burger" id="burger" aria-label="মেনু"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- Cart Hero -->
+<section class="cart-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="index.html">হোম</a> / কার্ট</div>
+    <h1>আপনার <em style="color:var(--light);font-style:normal">কার্ট</em></h1>
+  </div>
+</section>
+
+<!-- Cart Content -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cart-layout">
+      <!-- Cart Items -->
+      <div class="cart-items-panel" id="cartItemsPanel">
+        <h2> আপনার নির্বাচিত পণ্য</h2>
+        <div id="cartItemsList">
+          <p class="loading">লোড হচ্ছে…</p>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="cart-summary">
+        <h2>📊 অর্ডার সারসংক্ষেপ</h2>
+        
+        <div class="delivery-options">
+          <label>ডেলিভারি এলাকা</label>
+          <div class="delivery-opts">
+            <div class="delivery-opt">
+              <input type="radio" name="delivery" id="del-city" value="city" checked>
+              <label for="del-city">
+                <span class="opt-icon">🏙️</span>
+                <span>ঢাকা সিটি</span>
+                <span class="opt-price" data-scity>৳৬০</span>
+              </label>
+            </div>
+            <div class="delivery-opt">
+              <input type="radio" name="delivery" id="del-out" value="out">
+              <label for="del-out">
+                <span class="opt-icon">🚚</span>
+                <span>ঢাকার বাইরে</span>
+                <span class="opt-price" data-sout>৳১২০</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-row">
+          <span>সাবটোটাল</span>
+          <span id="subtotal">৳০</span>
+        </div>
+        <div class="summary-row">
+          <span>ডেলিভারি চার্জ</span>
+          <span id="shipping">৳০</span>
+        </div>
+        <div class="summary-row total">
+          <span>সর্বমোট</span>
+          <span id="total">৳০</span>
+        </div>
+
+        <button class="btn btn-gold checkout-btn" id="checkoutBtn" disabled>
+          চেকআউটে যান →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap f-grid">
+    <div class="f-brand">
+      <span class="brand-t">মাঠ ফসল</span>
+      <p>খামারে পরীক্ষিত খাঁটি ও হাইব্রিড বীজের নির্ভরযোগ্য ঠিকানা।</p>
+      <p>📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০</span></a></p>
+      <p>📍 মাঠ ফসল খামার ও বীজ ভাণ্ডার, বগুড়া</p>
+    </div>
+    <div>
+      <h5>দ্রুত লিংক</h5>
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </div>
+    <div>
+      <h5>জনপ্রিয় জাত</h5>
+      <a href="shop.html">হাইব্রিড টমেটো</a>
+      <a href="shop.html">স্ট্রবেরি বীজ</a>
+      <a href="shop.html">চাইনিজ বাঁশ লাউ</a>
+      <a href="shop.html">বিগ বস কুমড়া</a>
+    </div>
+    <div>
+      <h5>সেবা</h5>
+      <p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p>
+      <p>⏰ প্রতিদিন সকাল ৯টা — রাত ৯টা</p>
+      <p>🌱 বপন পরামর্শ একদম ফ্রি</p>
+    </div>
+  </div>
+  <div class="wrap f-bottom">
+    <span>© ০২৫ মাঠ ফসল — সর্বস্বত্ব সংরক্ষিত</span>
+    <a class="adm-link" href="login.html">🔒 অ্যাডমিন লগইন</a>
+  </div>
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/cart-page.js"></script>
+<script>
+let PRODUCTS=[];
+
+async function loadProducts(){
+  try{PRODUCTS=await getAllProducts();}catch(e){}
+  renderCart();
+}
+
+function getCartItems(){
+  return getCart().map(i=>{
+    const p=PRODUCTS.find(x=>x.id===i.id);
+    return p?{...i,product:p}:null;
+  }).filter(i=>i);
+}
+
+function calculateTotals(){
+  const items=getCartItems();
+  const subtotal=items.reduce((sum,i)=>sum+i.product.price*i.qty,0);
+  const deliveryType=document.querySelector('input[name="delivery"]:checked')?.value||'city';
+  const shipping=items.length?(deliveryType==='city'?SETTINGS.city:SETTINGS.out):0;
+  return{subtotal,shipping,total:subtotal+shipping};
+}
+
+function renderCart(){
+  const container=document.getElementById('cartItemsList');
+  const items=getCartItems();
+  
+  if(!items.length){
+    container.innerHTML=`
+      <div class="empty-cart">
+        <div class="empty-icon"></div>
+        <h3>আপনার কার্ট খালি</h3>
+        <p>পছন্দের বীজ যোগ করুন, ফলনের প্রস্তুতি শুরু হোক!</p>
+        <a href="shop.html" class="btn btn-gold"> বীজ ভাণ্ডারে যান</a>
+      </div>
+    `;
+    document.getElementById('checkoutBtn').disabled=true;
+    return;
+  }
+
+  container.innerHTML=items.map(item=>`
+    <div class="cart-item" data-id="${item.id}">
+      <div class="cart-item-img">
+        <img src="${item.product.img}" alt="${item.product.name}">
+      </div>
+      <div class="cart-item-info">
+        <h3><a href="product.html?id=${item.id}">${item.product.name}</a></h3>
+        <div class="item-price">৳${item.product.price} / প্যাকেট</div>
+        <div class="qty-selector">
+          <button class="qty-btn qty-decrease" data-id="${item.id}" ${item.qty<=1?'disabled':''}>−</button>
+          <div class="qty-value">${item.qty}</div>
+          <button class="qty-btn qty-increase" data-id="${item.id}" ${item.qty>=item.product.stock?'disabled':''}>+</button>
+        </div>
+      </div>
+      <div class="cart-item-actions">
+        <div class="cart-item-total">৳${item.product.price*item.qty}</div>
+        <button class="remove-btn" data-remove="${item.id}">🗑 বাদ দিন</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Attach event listeners
+  document.querySelectorAll('.qty-increase').forEach(btn=>{
+    btn.addEventListener('click',()=>updateQuantity(btn.dataset.id,1));
+  });
+  document.querySelectorAll('.qty-decrease').forEach(btn=>{
+    btn.addEventListener('click',()=>updateQuantity(btn.dataset.id,-1));
+  });
+  document.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.addEventListener('click',()=>removeItem(btn.dataset.remove));
+  });
+
+  updateSummary();
+}
+
+function updateQuantity(id,change){
+  const cart=getCart();
+  const item=cart.find(i=>i.id===id);
+  if(!item)return;
+  
+  const product=PRODUCTS.find(p=>p.id===id);
+  const newQty=item.qty+change;
+  
+  if(newQty<1||newQty>product.stock)return;
+  
+  item.qty=newQty;
+  setCart(cart);
+  renderCart();
+}
+
+function removeItem(id){
+  if(!confirm('এই পণ্যটি কার্ট থেকে বাদ দেবেন?'))return;
+  const cart=getCart().filter(i=>i.id!==id);
+  setCart(cart);
+  renderCart();
+}
+
+function updateSummary(){
+  const totals=calculateTotals();
+  document.getElementById('subtotal').textContent='৳'+totals.subtotal;
+  document.getElementById('shipping').textContent='৳'+totals.shipping;
+  document.getElementById('total').textContent='৳'+totals.total;
+  document.getElementById('checkoutBtn').disabled=!getCart().length;
+}
+
+document.querySelectorAll('input[name="delivery"]').forEach(radio=>{
+  radio.addEventListener('change',updateSummary);
+});
+
+document.getElementById('checkoutBtn').addEventListener('click',()=>{
+  if(getCart().length){
+    window.location.href='checkout.html';
+  }
+});
+
+loadProducts();
+</script>
+</body>
+</html>
