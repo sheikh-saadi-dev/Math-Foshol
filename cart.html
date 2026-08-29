@@ -530,32 +530,66 @@ function renderCart(){
     btn.addEventListener('click',()=>updateQuantity(btn.dataset.id,-1));
   });
   document.querySelectorAll('[data-remove]').forEach(btn=>{
-    btn.addEventListener('click',()=>removeItem(btn.dataset.remove));
-  });
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script>
+let PRODUCTS=[];
+async function loadProducts(){try{PRODUCTS=await getAllProducts();}catch(e){}renderCart();}
 
+function getCartItems(){return getCart().map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);return p?{...i,product:p}:null;}).filter(i=>i);}
+function calculateTotals(){
+  const items=getCartItems();
+  const subtotal=items.reduce((sum,i)=>sum+i.product.price*i.qty,0);
+  const deliveryType=document.querySelector('input[name="delivery"]:checked')?.value||'city';
+  const shipping=items.length?(deliveryType==='city'?SETTINGS.city:SETTINGS.out):0;
+  return{subtotal,shipping,total:subtotal+shipping};
+}
+
+function renderCart(){
+  const container=document.getElementById('cartItemsList');
+  const items=getCartItems();
+  if(!items.length){
+    container.innerHTML=`<div class="empty-cart"><div class="empty-icon">🧺</div><h3>আপনার কার্ট খালি</h3><p>পছন্দের বীজ যোগ করুন, ফলনের প্রস্তুতি শুরু হোক!</p><a href="shop.html" class="btn btn-gold">🌱 বীজ ভাণ্ডারে যান</a></div>`;
+    document.getElementById('checkoutBtn').disabled=true;return;
+  }
+  container.innerHTML=items.map(item=>`
+    <div class="cart-item" data-id="${item.id}">
+      <div class="cart-item-img"><img src="${item.product.img}" alt="${item.product.name}"></div>
+      <div class="cart-item-info">
+        <h3><a href="product.html?id=${item.id}">${item.product.name}</a></h3>
+        <div class="item-price">৳${item.product.price} / প্যাকেট</div>
+        <div class="qty-selector">
+          <button class="qty-btn qty-decrease" data-id="${item.id}" ${item.qty<=1?'disabled':''}>−</button>
+          <div class="qty-value">${item.qty}</div>
+          <button class="qty-btn qty-increase" data-id="${item.id}" ${item.qty>=item.product.stock?'disabled':''}>+</button>
+        </div>
+      </div>
+      <div class="cart-item-actions">
+        <div class="cart-item-total">৳${item.product.price*item.qty}</div>
+        <button class="remove-btn" data-remove="${item.id}">🗑 বাদ দিন</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.qty-increase').forEach(btn=>{btn.addEventListener('click',()=>updateQuantity(btn.dataset.id,1));});
+  document.querySelectorAll('.qty-decrease').forEach(btn=>{btn.addEventListener('click',()=>updateQuantity(btn.dataset.id,-1));});
+  document.querySelectorAll('[data-remove]').forEach(btn=>{btn.addEventListener('click',()=>removeItem(btn.dataset.remove));});
   updateSummary();
 }
 
 function updateQuantity(id,change){
-  const cart=getCart();
-  const item=cart.find(i=>i.id===id);
-  if(!item)return;
-  
-  const product=PRODUCTS.find(p=>p.id===id);
-  const newQty=item.qty+change;
-  
+  const cart=getCart();const item=cart.find(i=>i.id===id);if(!item)return;
+  const product=PRODUCTS.find(p=>p.id===id);const newQty=item.qty+change;
   if(newQty<1||newQty>product.stock)return;
-  
-  item.qty=newQty;
-  setCart(cart);
-  renderCart();
+  item.qty=newQty;setCart(cart);renderCart();
 }
 
 function removeItem(id){
   if(!confirm('এই পণ্যটি কার্ট থেকে বাদ দেবেন?'))return;
-  const cart=getCart().filter(i=>i.id!==id);
-  setCart(cart);
-  renderCart();
+  setCart(getCart().filter(i=>i.id!==id));renderCart();
 }
 
 function updateSummary(){
@@ -566,16 +600,8 @@ function updateSummary(){
   document.getElementById('checkoutBtn').disabled=!getCart().length;
 }
 
-document.querySelectorAll('input[name="delivery"]').forEach(radio=>{
-  radio.addEventListener('change',updateSummary);
-});
-
-document.getElementById('checkoutBtn').addEventListener('click',()=>{
-  if(getCart().length){
-    window.location.href='checkout.html';
-  }
-});
-
+document.querySelectorAll('input[name="delivery"]').forEach(radio=>{radio.addEventListener('change',updateSummary);});
+document.getElementById('checkoutBtn').addEventListener('click',()=>{if(getCart().length)window.location.href='checkout.html';});
 loadProducts();
 </script>
 </body>
