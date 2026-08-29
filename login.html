@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>অ্যাডমিন লগইন — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Galada&family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="hdr"><div class="wrap hd">
+ <a class="brand" href="index.html">
+  <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" fill="#153723"/><path d="M24 38V20M24 24c0-7 5-11 12-11 0 8-5 11-12 11zm0 4c0-6-4.5-9.5-10.5-9.5 0 7 4.5 9.5 10.5 9.5z" stroke="#f0b429" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span><span class="brand-t">মাঠ ফসল</span><small>খাঁটি বীজ • নিশ্চিত ফলন</small></span>
+ </a>
+ <div class="hd-tools"><a class="cart-btn" href="index.html">← সাইটে ফিরুন</a></div>
+</div></header>
+
+<div class="auth-wrap">
+ <form class="auth-card" id="loginForm">
+  <div style="text-align:center;font-size:2.8rem">🔐</div>
+  <h1>অ্যাডমিন লগইন</h1>
+  <p class="sub">শুধুমাত্র অনুমোদিত ব্যবহারকারীর জন্য</p>
+  <div class="field"><label>ইমেইল</label><input id="lg-email" type="email" placeholder="admin@mathfosal.com" required></div>
+  <div class="field"><label>পাসওয়ার্ড</label><input id="lg-pw" type="password" placeholder="••••••••" required></div>
+  <p id="lgErr" style="color:var(--red);font-size:.86rem;display:none;margin-bottom:10px"></p>
+  <button class="btn btn-green" style="width:100%" id="lgBtn" type="submit">লগইন করুন</button>
+ </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>
