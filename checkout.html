@@ -1,13 +1,635 @@
-<div class="page-head"><div class="wrap">
- <div class="crumb"><a href="index.html">হোম</a> / চেকআউট</div>
- <h1>অর্ডার <em>করুন</em></h1>
-</div></div>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>চেকআউট — মাঠ ফসল</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Checkout-specific styles */
+.checkout-hero{
+  background:linear-gradient(135deg,var(--green) 0%,var(--dark2) 100%);
+  color:#fff;
+  padding:60px 0;
+  position:relative;
+  overflow:hidden;
+}
+.checkout-hero::after{
+  content:"✓";
+  position:absolute;
+  right:8%;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10rem;
+  opacity:.08;
+  font-weight:700;
+}
+.checkout-hero h1{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:clamp(1.8rem,3.5vw,2.5rem);
+  margin-bottom:8px;
+}
+.checkout-hero .crumb{
+  font-size:.87rem;
+  opacity:.8;
+}
+.checkout-hero .crumb a{color:var(--light)}
 
-<section><div class="wrap" id="coBox"><p class="loading">লোড হচ্ছে…</p></div></section>
+.checkout-layout{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:30px;
+  margin-top:-40px;
+  position:relative;
+  z-index:2;
+}
+
+.checkout-form-panel{
+  background:#fff;
+  border-radius:20px;
+  padding:32px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+}
+.checkout-form-panel h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.4rem;
+  color:var(--dark);
+  margin-bottom:24px;
+  padding-bottom:14px;
+  border-bottom:2px solid var(--line);
+}
+
+.form-section{
+  margin-bottom:28px;
+}
+.form-section h3{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:600;
+  font-size:1.1rem;
+  color:var(--dark2);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.checkout-form .field{
+  margin-bottom:18px;
+}
+.checkout-form .field label{
+  display:block;
+  font-weight:600;
+  font-size:.9rem;
+  color:var(--dark);
+  margin-bottom:8px;
+}
+.checkout-form .field label .required{
+  color:var(--red);
+}
+.checkout-form .field input,
+.checkout-form .field textarea,
+.checkout-form .field select{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:13px 16px;
+  font-size:.95rem;
+  transition:all .25s;
+  background:var(--cream);
+}
+.checkout-form .field input:focus,
+.checkout-form .field textarea:focus,
+.checkout-form .field select:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(42,131,95,.1);
+  outline:none;
+  background:#fff;
+}
+.checkout-form textarea{
+  resize:vertical;
+  min-height:100px;
+}
+.checkout-form .field.bad input,
+.checkout-form .field.bad textarea{
+  border-color:var(--red);
+  animation:shake .4s;
+}
+
+/* Payment Options */
+.payment-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.payment-opt{
+  position:relative;
+}
+.payment-opt input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.payment-opt label{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:20px 16px;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  cursor:pointer;
+  transition:all .25s;
+  text-align:center;
+}
+.payment-opt input:checked+label{
+  border-color:var(--green);
+  background:rgba(42,131,95,.06);
+}
+.payment-opt label .pay-icon{
+  font-size:2rem;
+}
+.payment-opt label .pay-name{
+  font-weight:600;
+  font-size:.9rem;
+  color:var(--dark);
+}
+
+/* Order Summary Side */
+.checkout-summary{
+  background:#fff;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 10px 40px rgba(9,35,40,.08);
+  border:1px solid var(--line);
+  position:sticky;
+  top:100px;
+  height:fit-content;
+}
+.checkout-summary h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--dark);
+  margin-bottom:20px;
+  padding-bottom:14px;
+  border-bottom:2px solid var(--line);
+}
+
+.summary-items{
+  max-height:300px;
+  overflow-y:auto;
+  margin-bottom:20px;
+}
+.summary-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px dashed var(--line);
+  font-size:.9rem;
+}
+.summary-item:last-child{border:none}
+.summary-item .si-name{
+  flex:1;
+  color:var(--dark);
+  font-weight:500;
+}
+.summary-item .si-qty{
+  color:var(--mut);
+  margin:0 12px;
+  font-size:.85rem;
+}
+.summary-item .si-price{
+  font-weight:700;
+  color:var(--green);
+  min-width:80px;
+  text-align:right;
+}
+
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  font-size:.95rem;
+  color:var(--mut);
+}
+.summary-row.total{
+  border-top:2px solid var(--line);
+  margin-top:10px;
+  padding-top:16px;
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--dark);
+}
+.summary-row.total span:last-child{
+  color:var(--green);
+  font-size:1.3rem;
+}
+
+.place-order-btn{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  font-size:1.05rem;
+}
+
+/* Success Modal */
+.success-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(9,35,40,.7);
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:20px;
+}
+.success-modal.show{
+  display:flex;
+  animation:fadeIn .3s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.success-content{
+  background:#fff;
+  border-radius:24px;
+  padding:40px;
+  max-width:480px;
+  width:100%;
+  text-align:center;
+  animation:slideUp .4s;
+}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+
+.success-icon{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--light) 0%,var(--green) 100%);
+  display:grid;
+  place-items:center;
+  font-size:2.5rem;
+  margin:0 auto 20px;
+  box-shadow:0 10px 30px rgba(42,131,95,.3);
+}
+.success-content h2{
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.6rem;
+  color:var(--dark);
+  margin-bottom:12px;
+}
+.success-content p{
+  color:var(--mut);
+  margin-bottom:16px;
+  line-height:1.6;
+}
+.order-id{
+  display:inline-block;
+  background:var(--cream);
+  border:2px solid var(--green);
+  border-radius:12px;
+  padding:12px 24px;
+  font-family:'Hind Siliguri',sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--green);
+  margin:16px 0;
+  letter-spacing:1px;
+}
+
+@media(max-width:900px){
+  .checkout-layout{grid-template-columns:1fr}
+  .checkout-summary{position:static}
+  .payment-options{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <span class="tb-item">📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০</span></a></span>
+      <span class="tb-item">⏰ সকাল ৯টা – রাত ৯টা</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-item">🚚 সারাদেশে ডেলিভারি</span>
+      <span class="tb-item">🌱 ৯৮% গজানোর নিশ্চয়তা</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="hdr">
+  <div class="wrap hd">
+    <a class="brand" href="index.html">
+      <div class="brand-logo">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 38V20M24 24c0-7 5-11 12-11 0 8-5 11-12 11zm0 4c0-6-4.5-9.5-10.5-9.5 0 7 4.5 9.5 10.5 9.5z" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-t">মাঠ ফসল</span>
+        <small>খাঁটি বীজ • নিশ্চিত ফলন</small>
+      </div>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </nav>
+    <div class="hd-tools">
+      <a class="cart-btn" href="cart.html"><span class="cart-icon">🧺</span><span class="cart-label">কার্ট</span><span id="cartCount">০</span></a>
+      <button class="burger" id="burger" aria-label="মেনু"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- Checkout Hero -->
+<section class="checkout-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="index.html">হোম</a> / <a href="cart.html">কার্ট</a> / চেকআউট</div>
+    <h1>অর্ডার <em style="color:var(--light);font-style:normal">সম্পন্ন করুন</em></h1>
+  </div>
+</section>
+
+<!-- Checkout Content -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="checkout-layout">
+      <!-- Form -->
+      <div class="checkout-form-panel">
+        <h2>📝 ডেলিভারির তথ্য</h2>
+        
+        <form class="checkout-form" id="checkoutForm">
+          <!-- Personal Info -->
+          <div class="form-section">
+            <h3>👤 ব্যক্তিগত তথ্য</h3>
+            <div class="field">
+              <label>আপনার নাম <span class="required">*</span></label>
+              <input type="text" id="co-name" placeholder="যেমন: আব্দুল করিম" required>
+            </div>
+            <div class="field">
+              <label>মোবাইল নম্বর <span class="required">*</span></label>
+              <input type="tel" id="co-phone" placeholder="01XXXXXXXXX" required>
+            </div>
+            <div class="field">
+              <label>ইমেইল (ঐচ্ছিক)</label>
+              <input type="email" id="co-email" placeholder="your@email.com">
+            </div>
+          </div>
+
+          <!-- Delivery Address -->
+          <div class="form-section">
+            <h3>📍 ডেলিভারি িকানা</h3>
+            <div class="field">
+              <label>সম্পূর্ণ ঠিকানা <span class="required">*</span></label>
+              <textarea id="co-address" rows="3" placeholder="গ্রাম/বাসা, থানা, জেলা, পোস্ট কোড" required></textarea>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section">
+            <h3>💳 পেমেন্ট মাধ্যম</h3>
+            <div class="payment-options">
+              <div class="payment-opt">
+                <input type="radio" name="payment" id="pay-cod" value="ক্যাশ অন ডেলিভারি" checked>
+                <label for="pay-cod">
+                  <span class="pay-icon">💵</span>
+                  <span class="pay-name">ক্যাশ অন ডেলিভারি</span>
+                </label>
+              </div>
+              <div class="payment-opt">
+                <input type="radio" name="payment" id="pay-bkash" value="বিকাশ/নগদ">
+                <label for="pay-bkash">
+                  <span class="pay-icon">📱</span>
+                  <span class="pay-name">বিকাশ/নগদ</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold place-order-btn" id="placeOrderBtn">
+            ✓ অর্ডার নিশ্চিত করুন
+          </button>
+        </form>
+      </div>
+
+      <!-- Summary -->
+      <div class="checkout-summary">
+        <h2> আপনার অর্ডার</h2>
+        
+        <div class="summary-items" id="summaryItems">
+          <p class="loading">লোড হচ্ছে…</p>
+        </div>
+
+        <div class="summary-row">
+          <span>সাবটোটাল</span>
+          <span id="co-subtotal">০</span>
+        </div>
+        <div class="summary-row">
+          <span>ডেলিভারি চার্জ</span>
+          <span id="co-shipping">০</span>
+        </div>
+        <div class="summary-row total">
+          <span>সর্বমোট</span>
+          <span id="co-total">৳০</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-content">
+    <div class="success-icon">✓</div>
+    <h2>অর্ডার সফল হয়েছে!</h2>
+    <p>আপনার অর্ডার নম্বর</p>
+    <div class="order-id" id="successOrderId">MF-0000</div>
+    <p>আমাদের টিম শীঘ্রই ফোন করে অর্ডারটি নিশ্চিত করবে।</p>
+    <a href="track-order.html" class="btn btn-gold" style="margin-top:16px">📦 অর্ডার ট্র্যাক করুন</a>
+    <br>
+    <a href="shop.html" style="display:inline-block;margin-top:12px;color:var(--green);font-weight:600">← আরও কেনাকাটা করুন</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap f-grid">
+    <div class="f-brand">
+      <span class="brand-t">মাঠ ফসল</span>
+      <p>খামারে পরীক্ষিত খাঁটি ও হাইব্রিড বীজের নির্ভরযোগ্য ঠিকানা।</p>
+      <p>📞 <a href="tel:01700000000" data-tel><span data-phone>০১৭০০-০০০০০০</span></a></p>
+      <p>📍 মাঠ ফসল খামার ও বীজ ভাণ্ডার, বগুড়া</p>
+    </div>
+    <div>
+      <h5>দ্রুত লিংক</h5>
+      <a href="index.html">হোম</a>
+      <a href="shop.html">বীজ ভাণ্ডার</a>
+      <a href="cart.html">কার্ট</a>
+      <a href="track-order.html">অর্ডার ট্র্যাক</a>
+      <a href="contact.html">যোগাযোগ</a>
+    </div>
+    <div>
+      <h5>জনপ্রিয় জাত</h5>
+      <a href="shop.html">হাইব্রিড টমেটো</a>
+      <a href="shop.html">স্ট্রবেরি বীজ</a>
+      <a href="shop.html">চাইনিজ বাঁশ লাউ</a>
+      <a href="shop.html">বিগ বস কুমড়া</a>
+    </div>
+    <div>
+      <h5>সেবা</h5>
+      <p>🚚 সারাদেশে ক্যাশ অন ডেলিভারি</p>
+      <p>⏰ প্রতিদিন সকাল ৯টা — রাত ৯টা</p>
+      <p>🌱 বপন পরামর্শ একদম ফ্রি</p>
+    </div>
+  </div>
+  <div class="wrap f-bottom">
+    <span>© ২০২৫ মাঠ ফসল — সর্বস্বত্ব সংরক্ষিত</span>
+    <a class="adm-link" href="login.html">🔒 অ্যাডমিন লগইন</a>
+  </div>
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/common.js"></script>
-<script src="js/checkout.js"></script>
+<script>
+let PRODUCTS=[];
+
+async function init(){
+  try{PRODUCTS=await getAllProducts();}catch(e){}
+  renderSummary();
+}
+
+function getCartItems(){
+  return getCart().map(i=>{
+    const p=PRODUCTS.find(x=>x.id===i.id);
+    return p?{...i,product:p}:null;
+  }).filter(i=>i);
+}
+
+function calculateTotals(){
+  const items=getCartItems();
+  const subtotal=items.reduce((sum,i)=>sum+i.product.price*i.qty,0);
+  const shipping=items.length?SETTINGS.out:0;
+  return{subtotal,shipping,total:subtotal+shipping};
+}
+
+function renderSummary(){
+  const container=document.getElementById('summaryItems');
+  const items=getCartItems();
+  
+  if(!items.length){
+    container.innerHTML='<p style="text-align:center;color:var(--mut);padding:20px">কার্ট খালি</p>';
+    return;
+  }
+
+  container.innerHTML=items.map(item=>`
+    <div class="summary-item">
+      <span class="si-name">${item.product.name}</span>
+      <span class="si-qty">×${item.qty}</span>
+      <span class="si-price">৳${item.product.price*item.qty}</span>
+    </div>
+  `).join('');
+
+  const totals=calculateTotals();
+  document.getElementById('co-subtotal').textContent='৳'+totals.subtotal;
+  document.getElementById('co-shipping').textContent='৳'+totals.shipping;
+  document.getElementById('co-total').textContent='৳'+totals.total;
+}
+
+document.getElementById('checkoutForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  
+  const name=document.getElementById('co-name').value.trim();
+  const phone=document.getElementById('co-phone').value.trim();
+  const email=document.getElementById('co-email').value.trim();
+  const address=document.getElementById('co-address').value.trim();
+  const payment=document.querySelector('input[name="payment"]:checked').value;
+  
+  let valid=true;
+  
+  if(name.length<2){
+    document.getElementById('co-name').parentElement.classList.add('bad');
+    valid=false;
+  }else{
+    document.getElementById('co-name').parentElement.classList.remove('bad');
+  }
+  
+  if(!/^01[3-9]\d{8}$/.test(phone)){
+    document.getElementById('co-phone').parentElement.classList.add('bad');
+    valid=false;
+  }else{
+    document.getElementById('co-phone').parentElement.classList.remove('bad');
+  }
+  
+  if(address.length<8){
+    document.getElementById('co-address').parentElement.classList.add('bad');
+    valid=false;
+  }else{
+    document.getElementById('co-address').parentElement.classList.remove('bad');
+  }
+  
+  if(!valid){
+    alert('সব ঘর সঠিকভাবে পূরণ করুন');
+    return;
+  }
+  
+  const btn=document.getElementById('placeOrderBtn');
+  btn.disabled=true;
+  btn.textContent='অর্ডার প্রক্রিয়া হচ্ছে…';
+  
+  const items=getCartItems();
+  const totals=calculateTotals();
+  const orderId='MF-'+Date.now().toString(36).toUpperCase();
+  
+  try{
+    await db.collection('orders').doc(orderId).set({
+      items:items.map(i=>({
+        id:i.product.id,
+        name:i.product.name,
+        price:i.product.price,
+        qty:i.qty
+      })),
+      subtotal:totals.subtotal,
+      shipping:totals.shipping,
+      total:totals.total,
+      name,
+      phone,
+      email,
+      address,
+      payment,
+      status:'pending',
+      date:Date.now()
+    });
+    
+    setCart([]);
+    document.getElementById('successOrderId').textContent=orderId;
+    document.getElementById('successModal').classList.add('show');
+    
+  }catch(err){
+    console.error(err);
+    alert('অর্ডার করা যায়নি। আবার চেষ্টা করুন।');
+    btn.disabled=false;
+    btn.textContent='✓ অর্ডার নিশ্চিত করুন';
+  }
+});
+
+init();
+</script>
+</body>
+</html>
